@@ -1,0 +1,38 @@
+apply plugin: 'idea'
+apply plugin: 'com.moowork.node'
+
+node {
+  version = '6.10.2'
+  npmVersion = '3.10.6'
+  download = true
+  workDir = file("${project.buildDir}/node")
+  nodeModulesDir = file("${project.projectDir}")
+}
+
+/**
+ * Runs "npm run build" to build the angular app.
+ */
+task build(type: NpmTask) {
+  args = ['run', 'build']
+}
+build.dependsOn(npm_install)
+
+/**
+ * Deletes the "dist" folder containing the result of the Angular build process.
+ */
+task clean(type: Delete){
+  delete "dist"
+}
+
+/**
+ * Cleans everything that is created by the node plugin, i.e. the node installation and the node_modules
+ * folder.
+ */
+task cleanAll(type: Delete){
+  delete "build"
+  delete "node_modules"
+  delete ".gradle"
+}
+cleanAll.dependsOn(clean)
+
+
