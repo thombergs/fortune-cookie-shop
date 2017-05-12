@@ -1,0 +1,25 @@
+apply plugin: "org.springframework.boot"
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:${version_spring_boot}"
+    compile "org.springframework.boot:spring-boot-starter-actuator:${version_spring_boot}"
+
+    runtime "org.springframework.boot:spring-boot-starter-tomcat:${version_spring_boot}"
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:${version_spring_boot}"
+    testCompile "junit:junit:4.12"
+    testCompile "org.assertj:assertj-core:3.5.1"
+}
+
+springBoot {
+    executable = true
+}
+
+bootRun {
+    jvmArgs =
+            [
+                    // debugging
+                    "-Xdebug",
+                    "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005",
+            ]
+}

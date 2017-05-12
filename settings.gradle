@@ -1,0 +1,5 @@
+include 'fortune-cookie-app-service'
+include 'fortune-cookie-app'
+include 'fortune-cookie-fulfillment-service'
+include 'fortune-cookie-mailing-service'
+include 'fortune-cookie-quote-service'

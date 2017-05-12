@@ -1,0 +1,28 @@
+apply plugin: 'idea'
+
+version '1.0.0-SNAPSHOT'
+
+subprojects {
+    apply plugin: 'idea'
+
+    buildscript {
+        repositories {
+            mavenLocal()
+            mavenCentral()
+            jcenter()
+            maven {
+                url "https://plugins.gradle.org/m2/"
+            }
+        }
+
+        dependencies {
+            classpath "org.springframework.boot:spring-boot-gradle-plugin:${version_spring_boot}"
+            classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
