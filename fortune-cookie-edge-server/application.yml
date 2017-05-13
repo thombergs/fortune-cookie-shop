@@ -1,0 +1,21 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: EdgeServer
+
+zuul:
+  routes:
+    fulfillment:
+      path: /fulfillment/**
+      url: http://127.0.0.1:8081
+    mailing:
+      path: /mailing/**
+      url: http://127.0.0.1:8082
+    quotes:
+      path: /quotes/**
+      url: http://127.0.0.1:8083
+    appserver:
+      path: /**
+      url: http://127.0.0.1:8080

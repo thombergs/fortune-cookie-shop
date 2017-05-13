@@ -1,12 +1,12 @@
-package de.adesso.cookies.appserver;
+package de.adesso.cookies.edgeserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FortuneCookieAppServerApplication {
+public class AppServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FortuneCookieAppServerApplication.class, args);
+		SpringApplication.run(AppServerApplication.class, args);
 	}
 }
