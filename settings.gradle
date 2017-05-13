@@ -1,4 +1,4 @@
-include 'fortune-cookie-app-service'
+include 'fortune-cookie-app-server'
 include 'fortune-cookie-app'
 include 'fortune-cookie-fulfillment-service'
 include 'fortune-cookie-mailing-service'
