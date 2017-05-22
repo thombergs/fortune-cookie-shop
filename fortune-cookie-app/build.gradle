@@ -1,6 +1,26 @@
 apply plugin: 'idea'
 apply plugin: 'com.moowork.node'
 
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+
+  dependencies {
+    classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
+  }
+}
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+}
+
 node {
   version = '6.10.2'
   npmVersion = '3.10.6'
