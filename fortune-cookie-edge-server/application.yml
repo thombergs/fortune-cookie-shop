@@ -14,7 +14,7 @@ zuul:
       path: /mailing/**
       url: http://127.0.0.1:8082
     quotes:
-      path: /quotes/**
+      path: /products/**
       url: http://127.0.0.1:8083
     appserver:
       path: /**
