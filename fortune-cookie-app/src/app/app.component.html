@@ -1,3 +1,23 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container"></div>
+
+<div class="shop-items blocky">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <h1>Fortune Cookie Shop</h1>
+        <p>Select fortune cookies below to add them to your cart.</p>
+      </div>
+      <div class="col-md-6 col-sm-6 col-xs-12 pull-right" shopping-cart></div>
+    </div>
+
+
+    <div class="row" *ngFor="let productsRow of products">
+      <div class="col-md-3 col-sm-6 col-xs-12" *ngFor="let product of productsRow">
+        <product-tile [product]="product"></product-tile>
+      </div>
+    </div>
+  </div>
+
+
+</div>
