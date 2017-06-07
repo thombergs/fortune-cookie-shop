@@ -13,6 +13,7 @@ List of fortune cookies. A Fortune Cookie consists of a string with the quote an
 
 Type: application/json
 
+```json
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "array",
@@ -28,9 +29,9 @@ Type: application/json
         }
     }
 }
-
+```
 Example:
-
+```json
 [
       {
       "quote": "Never quit!",
@@ -45,3 +46,4 @@ Example:
       "price": 389
    }
 ]
+```
