@@ -14,8 +14,8 @@ To run the application, follow these steps:
 1. run `gradlew fortune-cookie-app-server:bootrun`
 1. run `gradlew fortune-cookie-fulfillment-service:bootrun`
 1. run `gradlew fortune-cookie-mailing-service:bootrun`
-1. run `gradlew fortune-cookie-quote-service:bootrun`
-1. run `gradlew fortune-cookie-edge-service:bootrun`
+1. run `gradlew fortune-cookie-product-service:bootrun`
+1. run `gradlew fortune-cookie-edge-server:bootrun`
 1. open http://localhost:8000 in your browser
 
 ## How the application works
