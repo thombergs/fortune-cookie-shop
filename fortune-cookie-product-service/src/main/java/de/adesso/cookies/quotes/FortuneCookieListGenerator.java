@@ -14,10 +14,10 @@ public class FortuneCookieListGenerator {
 
     private QuotesDB quotesDB = new QuotesDB();
 
-    ArrayList<FortuneCookieResource> list;
+    private ArrayList<FortuneCookieResource> list;
 
-    int min = 0;
-    int max = 1000;
+    private int min = 0;
+    private int max = 1000;
 
     public FortuneCookieListGenerator() {
 

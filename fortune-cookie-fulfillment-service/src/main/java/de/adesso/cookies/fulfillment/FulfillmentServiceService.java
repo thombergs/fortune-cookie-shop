@@ -28,7 +28,7 @@ public class FulfillmentServiceService {
 
             MailResource mailResource = new MailResource();
             mailResource.setMessage("message");
-            if(userResource.getEmail()!=null)
+            if(userResource != null && userResource.getEmail()!=null)
                 mailResource.setRecipient(userResource.getEmail());
             else
                 mailResource.setRecipient("default@mail.de");
