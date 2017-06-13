@@ -2,6 +2,7 @@ package de.adesso.cookies.fulfillment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -11,12 +12,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Random;
 
 @Service
-public class FulfillmentServiceService {
+public class FulfillmentServiceService  {
 
     private Logger logger = LoggerFactory.getLogger(FulfillmentServiceController.class);
 
     private Random random = new Random();
 
+    @HystrixCommand(fallbackMethod = "mailFallback",groupKey = "FulfillmentServiceGroup")
     public void sendMail(UserResource userResource) {
 
         try {
@@ -28,7 +30,7 @@ public class FulfillmentServiceService {
 
             MailResource mailResource = new MailResource();
             mailResource.setMessage("message");
-            if(userResource.getEmail()!=null)
+            if(userResource != null && userResource.getEmail()!=null)
                 mailResource.setRecipient(userResource.getEmail());
             else
                 mailResource.setRecipient("default@mail.de");
@@ -47,12 +49,16 @@ public class FulfillmentServiceService {
             ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8082/send",entity,String.class);
 
             if(response.getStatusCode().equals(HttpStatus.CREATED))
-                logger.info("Mail sent successfully!");
+                logger.info("Mail sent sendMail @HystrixCommand-Method completed!");
 
 
         } catch (JsonProcessingException e) {
             logger.error("jsonPrecessingException", e);
         }
+    }
+
+    public void mailFallback(UserResource userResource) {
+        logger.info("Mail sent fallback-Method completed!");
     }
 
     private void feelingLucky() {

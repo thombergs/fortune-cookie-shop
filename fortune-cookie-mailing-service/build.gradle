@@ -4,6 +4,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${version_spring_boot}"
     compile "org.springframework.boot:spring-boot-starter-actuator:${version_spring_boot}"
 
+    compile "com.netflix.hystrix:hystrix-core:1.5.10"
+
     runtime "org.springframework.boot:spring-boot-starter-tomcat:${version_spring_boot}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${version_spring_boot}"

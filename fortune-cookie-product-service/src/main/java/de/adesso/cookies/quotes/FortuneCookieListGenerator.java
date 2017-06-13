@@ -1,12 +1,14 @@
 package de.adesso.cookies.quotes;
 
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FortuneCookieListGenerator {
+public class FortuneCookieListGenerator extends HystrixCommand {
 
     private Logger logger = LoggerFactory.getLogger(FortuneCookieListGenerator.class);
 
@@ -14,17 +16,21 @@ public class FortuneCookieListGenerator {
 
     private QuotesDB quotesDB = new QuotesDB();
 
-    ArrayList<FortuneCookieResource> list;
+    private ArrayList<FortuneCookieResource> list;
 
-    int min = 0;
-    int max = 1000;
+    private int min = 0;
+    private int max = 1000;
+    private int size = 0;
 
-    public FortuneCookieListGenerator() {
+    public FortuneCookieListGenerator(int size) {
+        super(HystrixCommandGroupKey.Factory.asKey("ProductServiceGroup"),4500);
 
         list = new ArrayList<>();
+        this.size = size;
     }
 
-    public ArrayList<FortuneCookieResource> generateList(int size) {
+    @Override
+    protected ArrayList<FortuneCookieResource> run() throws Exception {
 
         feelingLucky();
         takeYourTime();
@@ -37,6 +43,12 @@ public class FortuneCookieListGenerator {
         }
 
         return list;
+    }
+
+    @Override
+    protected ArrayList<FortuneCookieResource> getFallback() {
+        // Fail silent
+        return new ArrayList<>();
     }
 
     private void feelingLucky() {
@@ -64,5 +76,6 @@ public class FortuneCookieListGenerator {
             }
         }
     }
+
 
 }

@@ -14,14 +14,12 @@ import java.util.Random;
 @RequestMapping("/product")
 public class ProductServiceController{
 
-    private FortuneCookieListGenerator cookieListGenerator = new FortuneCookieListGenerator();
-
     private Logger logger = LoggerFactory.getLogger(ProductServiceController.class);
 
     @RequestMapping(method = RequestMethod.GET,path = "/fortuneCookieList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ArrayList<FortuneCookieResource> fortuneCookieList() {
 
-        ArrayList<FortuneCookieResource> cookieList = cookieListGenerator.generateList(20);
+        ArrayList<FortuneCookieResource> cookieList = (ArrayList<FortuneCookieResource>) new FortuneCookieListGenerator(20).execute();
 
         logger.info("FortuneCookieListGenerator sent successfully!");
 
