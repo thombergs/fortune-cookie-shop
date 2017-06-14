@@ -1,6 +1,9 @@
 server:
   port: 8081
 
+management:
+  port: 8001
+
 spring:
   application:
     name: FulfillmentService

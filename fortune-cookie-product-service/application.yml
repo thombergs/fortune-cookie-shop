@@ -1,6 +1,9 @@
 server:
   port: 8083
 
+management:
+  port: 8003
+
 spring:
   application:
     name: ProductService
