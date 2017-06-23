@@ -32,7 +32,7 @@
               <tr *ngFor="let product of products">
                 <td>{{ product.quote }}</td>
                 <td>{{ product.price | cents | currency:'EUR':true }}</td>
-                <td class="pull-right"><a href="#" class="btn btn-danger btn-sm">Add to Cart</a>
+                <td class="pull-right"><a (click)="addToCart(product)" class="btn btn-danger btn-sm">Add to Cart</a>
                 </td>
               </tr>
               </tbody>
