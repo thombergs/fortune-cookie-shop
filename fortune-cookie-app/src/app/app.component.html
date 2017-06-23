@@ -4,19 +4,44 @@
   <div class="container">
 
     <div class="row">
+
       <div class="col-md-6 col-sm-6 col-xs-12">
         <h1>Fortune Cookie Shop</h1>
         <p>Select fortune cookies below to add them to your cart.</p>
       </div>
       <div class="col-md-6 col-sm-6 col-xs-12 pull-right" shopping-cart></div>
+
     </div>
 
-
-    <div class="row" *ngFor="let productsRow of products">
-      <div class="col-md-3 col-sm-6 col-xs-12" *ngFor="let product of productsRow">
-        <product-tile [product]="product"></product-tile>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title">Featured Fortune Cookies</h3>
+          </div>
+          <div class="box-body">
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th>Fortune Cookie Quote</th>
+                <th>Price</th>
+                <th>Buy</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let product of products">
+                <td>{{ product.quote }}</td>
+                <td>{{ product.price | cents | currency:'EUR':true }}</td>
+                <td class="pull-right"><a href="#" class="btn btn-danger btn-sm">Add to Cart</a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 
 

@@ -7,6 +7,7 @@ import {AppComponent} from "./app.component";
 import {ProductTileComponent} from "./product-tile/product-tile.component";
 import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
 import {CentsPipe} from "./shared/cents.pipe";
+import {ProductService} from "./shared/product.service";
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import {CentsPipe} from "./shared/cents.pipe";
     FormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [ProductService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

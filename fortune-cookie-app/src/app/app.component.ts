@@ -1,5 +1,6 @@
 import {Component, OnInit} from "@angular/core";
 import {Product} from "./shared/product";
+import {ProductService} from "./shared/product.service";
 
 @Component({
   selector: 'app-root',
@@ -8,21 +9,14 @@ import {Product} from "./shared/product";
 })
 export class AppComponent implements OnInit {
 
-  products: Product[][];
+  products: Product[];
+
+  constructor(private productService: ProductService) {
+
+  }
 
   ngOnInit(): void {
-    this.products = [
-      [
-        {quote: "Hello", priceInCents: 101},
-        {quote: "Hello2", priceInCents: 50},
-        {quote: "Hell3", priceInCents: 75},
-        {quote: "Hell3", priceInCents: 75},
-      ],
-      [
-        {quote: "foo", priceInCents: 101},
-        {quote: "bar", priceInCents: 50},
-      ]
-    ];
+    this.productService.getAll().subscribe(products => this.products = products);
   }
 
 

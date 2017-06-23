@@ -18,4 +18,4 @@ zuul:
       url: http://127.0.0.1:8083
     appserver:
       path: /**
-      url: http://127.0.0.1:8080
+      url: http://127.0.0.1:4200
