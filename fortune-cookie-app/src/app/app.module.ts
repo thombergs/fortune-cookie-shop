@@ -10,7 +10,7 @@ import {ProductService} from "./shared/product.service";
 import {ShoppingCartService} from "./shared/shopping-cart.service";
 import {FulfillmentService} from "./shared/fulfillment.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {SimpleNotificationsModule} from "angular2-notifications/dist";
+import {ToastModule} from "ng2-toastr";
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import {SimpleNotificationsModule} from "angular2-notifications/dist";
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    SimpleNotificationsModule.forRoot(),
+    ToastModule.forRoot(),
     FormsModule,
     HttpModule
   ],

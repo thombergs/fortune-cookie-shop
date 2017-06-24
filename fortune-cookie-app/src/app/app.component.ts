@@ -1,9 +1,9 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewContainerRef} from "@angular/core";
 import {Product} from "./shared/product";
 import {ProductService} from "./shared/product.service";
 import {ShoppingCartService} from "./shared/shopping-cart.service";
 import {FulfillmentService} from "./shared/fulfillment.service";
-import {NotificationsService} from "angular2-notifications/dist";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
   selector: 'app-root',
@@ -17,8 +17,9 @@ export class AppComponent implements OnInit {
   constructor(private productService: ProductService,
               private shoppingCartService: ShoppingCartService,
               private fulfillmentService: FulfillmentService,
-              private notificationService: NotificationsService) {
-
+              private notificationService: ToastsManager,
+              private vref: ViewContainerRef) {
+    this.notificationService.setRootViewContainerRef(vref)
   }
 
   ngOnInit(): void {

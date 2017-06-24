@@ -3,6 +3,7 @@ apply plugin: "org.springframework.boot"
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${version_spring_boot}"
     compile "org.springframework.boot:spring-boot-starter-actuator:${version_spring_boot}"
+    compile 'io.dropwizard.metrics:metrics-core:3.2.2'
 
     compile "com.netflix.hystrix:hystrix-core:1.5.10"
 
