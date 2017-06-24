@@ -1,5 +1,7 @@
 <div class="container"></div>
 
+<simple-notifications></simple-notifications>
+
 <div class="shop-items blocky">
   <div class="container">
 
@@ -9,7 +11,7 @@
         <h1>Fortune Cookie Shop</h1>
         <p>Select fortune cookies below to add them to your cart.</p>
       </div>
-      <div class="col-md-6 col-sm-6 col-xs-12 pull-right" shopping-cart></div>
+      <div class="col-md-6 col-sm-6 col-xs-12 pull-right" shopping-cart (checkoutClick)="checkout($event)"></div>
 
     </div>
 
@@ -32,7 +34,8 @@
               <tr *ngFor="let product of products">
                 <td>{{ product.quote }}</td>
                 <td>{{ product.price | cents | currency:'EUR':true }}</td>
-                <td class="pull-right"><a (click)="addToCart(product)" class="btn btn-danger btn-sm">Add to Cart</a>
+                <td class="pull-right"><a (click)="addToCart(product)"
+                                          class="btn btn-danger btn-sm">Add to Cart</a>
                 </td>
               </tr>
               </tbody>

@@ -8,6 +8,9 @@ import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
 import {CentsPipe} from "./shared/cents.pipe";
 import {ProductService} from "./shared/product.service";
 import {ShoppingCartService} from "./shared/shopping-cart.service";
+import {FulfillmentService} from "./shared/fulfillment.service";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {SimpleNotificationsModule} from "angular2-notifications/dist";
 
 @NgModule({
   declarations: [
@@ -17,10 +20,12 @@ import {ShoppingCartService} from "./shared/shopping-cart.service";
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    SimpleNotificationsModule.forRoot(),
     FormsModule,
     HttpModule
   ],
-  providers: [ProductService, ShoppingCartService],
+  providers: [ProductService, ShoppingCartService, FulfillmentService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

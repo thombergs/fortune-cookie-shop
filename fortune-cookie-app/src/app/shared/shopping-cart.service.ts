@@ -1,18 +1,21 @@
 import {Injectable} from "@angular/core";
 import {Product} from "./product";
 import "rxjs/add/operator/map";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class ShoppingCartService {
 
-  products: Product[] = [];
+  products: BehaviorSubject<Product[]> = new BehaviorSubject([]);
 
   addProduct(product: Product): void {
-    this.products.push(product);
+    let products: Product[] = this.products.getValue();
+    products.push(product);
+    this.products.next(products);
   }
 
-  getProductCount(): number {
-    return this.products.length;
+  resetShoppingCart(): void {
+    this.products.next([]);
   }
 
 }
