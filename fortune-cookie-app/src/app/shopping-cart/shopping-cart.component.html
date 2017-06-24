@@ -1,3 +1,4 @@
 <h3>Shopping Cart</h3>
-<p><strong>15</strong> fortune cookies. <strong>$5.15</strong> total. <a
-  class="btn btn-danger btn-sm">Check Out</a></p>
+<p><strong>{{ products.length }}</strong> fortune cookies. <strong>{{ total | cents |
+  currency:'EUR':true }}</strong> total.
+  <a class="btn btn-danger btn-sm" (click)="handleCheckoutClick()">Check Out</a></p>
