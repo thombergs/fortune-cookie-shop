@@ -28,7 +28,7 @@ public class MyService {
 
     @Autowired
     public MyService(MetricRegistry metricRegistry) {
-        this.timer = metricRegistry.timer(ProductServiceController.class.getSimpleName());
+        this.timer = metricRegistry.timer(MyService.class.getSimpleName());
     }
     
     public void timedMethod(){
@@ -43,7 +43,7 @@ public class MyService {
 }
 ```
 
-Beantworte dabei die folgenden Fragen:
+**Beantworte dabei die folgenden Fragen:**
 
 * an welchen Stellen ist es am sinnvollsten, die Erfassung der Metriken einzubauen? (Rest-Controller? Service-Schicht?)
 * wie könnte man die Fehlerrate eines Service als Metrik erfassen?
@@ -58,7 +58,7 @@ Um zu prüfen, ob die Metriken erfasst werden, greife auf den "/metrics"-Endpoin
 jeweiligen Serveranwendung zu (beachte, dass Metriken erst angezeigt werden, nachdem sie durch eine
 Aktion zum ersten mal berechnet wurden):
 
-Metrics-Endpunkte der jeweiligen Serveranwendung:
+**Metrics-Endpunkte der jeweiligen Serveranwendung:**
 
 * fortune-cookie-fulfillment-service: http://localhost:8081/metrics
 * fortune-cookie-mailing-service: http://localhost:8082/metrics
