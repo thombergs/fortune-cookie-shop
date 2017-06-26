@@ -8,7 +8,7 @@ Aufgaben ca. **60 Minuten** Zeit.
 
 Für die Erfassung der Metriken nutzen wir Dropwizard Metrics. Füge die folgenden
 Metriken (und ggf. weitere, die du für sinnvoll erachtest) in die Server-Anwendungen
-ein. Nutze als Grundlage die Code-Beispiele aus den Folien oder die Webseite unter
+ein. Nutze als Grundlage das untenstehende Code-Beispiel oder die Webseite unter
 (http://metrics.dropwizard.io/3.2.2/getting-started.html)[http://metrics.dropwizard.io/3.2.2/getting-started.html].
 
 * Durchsatz von Warenkorb-Checkouts pro Sekunde
@@ -17,6 +17,31 @@ ein. Nutze als Grundlage die Code-Beispiele aus den Folien oder die Webseite unt
 * Antwortzeiten von Warenkorb-Checkouts
 * Antwortzeiten des Mailversands
 * Antwortzeiten von Produkt-Listing-Anfragen
+
+**Beispiel-Code zum Einbinden eines Dropwizard-Timers:**
+
+```java
+@Service
+public class MyService { 
+    
+    private Timer timer;
+
+    @Autowired
+    public MyService(MetricRegistry metricRegistry) {
+        this.timer = metricRegistry.timer(ProductServiceController.class.getSimpleName());
+    }
+    
+    public void timedMethod(){
+        Timer.Context context = timer.time();
+        try {
+            // do something 
+        }finally {
+            context.stop();
+        }
+    }
+    
+}
+```
 
 Beantworte dabei die folgenden Fragen:
 
@@ -66,12 +91,19 @@ public class PrometheusConfiguration {
     new DropwizardExports(dropwizardMetricRegistry).register();
     ... // more metric exports
   }
+  
+  @Bean
+  public SpringBootMetricsCollector springBootMetricsCollector(Collection<PublicMetrics> metrics){
+      SpringBootMetricsCollector springBootMetricsCollector = new SpringBootMetricsCollector(metrics);
+      springBootMetricsCollector.register();
+      return springBootMetricsCollector;
+  }
 }
 ```
 
 Prüfe, ob die Metriken über den Endpoint `/prometheus` im Prometheus-Format angeboten werden.
 
-## Metiken mit Prometheus einsammeln
+## Metriken mit Prometheus einsammeln
 
 Konfiguriere Prometheus so, dass die `/prometheus`-Endpunkte der drei Service-Anwendungen
 gescannt werden und die Metriken damit in Prometheus angefragt werden können. Orientiere dich
