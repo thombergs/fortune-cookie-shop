@@ -2,7 +2,7 @@
 
 In dieser Übung wird ein Dashboard eingerichtet, mit dem die Metriken
 aus Prometheus visualisiert werden können. Nimm dir für diese Aufgaben
-ca. 30 Minuten Zeit.
+ca. **30 Minuten** Zeit.
 
 ## Grafana installieren
 

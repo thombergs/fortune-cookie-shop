@@ -1,6 +1,6 @@
 # Prometheus kennenlernen 
 
-Nimm dir für die folgenden Aufgaben 30 Minuten Zeit.
+Nimm dir für die folgenden Aufgaben ca. **30 Minuten** Zeit.
 
 ## Prometheus installieren
 
