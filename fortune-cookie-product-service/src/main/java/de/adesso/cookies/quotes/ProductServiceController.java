@@ -8,27 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/product")
-public class ProductServiceController{
+public class ProductServiceController {
 
     private Logger logger = LoggerFactory.getLogger(ProductServiceController.class);
 
     @RequestMapping(method = RequestMethod.GET,path = "/fortuneCookieList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ArrayList<FortuneCookieResource> fortuneCookieList() {
 
-        ArrayList<FortuneCookieResource> cookieList = (ArrayList<FortuneCookieResource>) new FortuneCookieListGenerator(20).execute();
+        ArrayList<FortuneCookieResource> cookieList = new FortuneCookieDao(0, 20).execute();
 
-        logger.info("FortuneCookieListGenerator sent successfully!");
-
+        logger.info("FortuneCookieDao sent successfully!");
         return cookieList;
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleException(final RuntimeException e) {
-        logger.error("Cannot sent FortuneCookieListGenerator due to error!", e);
+        logger.error("Cannot sent FortuneCookieDao due to error!", e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
