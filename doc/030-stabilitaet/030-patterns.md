@@ -4,7 +4,7 @@ In dieser Übung werden die Services des Shops mit der Hilfe von Hystrix durch S
 Nimm dir für diese Aufgaben **45 Minuten** Zeit.
 
 ## Stabilisierung des fortune-cookie-product-service
-Die Klasse FortuneCookieListGenerator lädt aus einer "simulierten" Quote-Datenbank eine konfigurierbare Menge von Quotes. Antwortet das "Datenbanksystem" nicht oder zu langsam, werden nach und nach alle Threads der Anwendung blockiert.
+Die Klasse FortuneCookieListGenerator lädt aus einer "simulierten" Quote-Datenbank alle vorhandenen Quotes. Antwortet das "Datenbanksystem" nicht oder zu langsam, werden nach und nach alle Threads der Anwendung blockiert.
 
 ### Circuit Breaker | Timeout | Fail Fast
 In drei einfachen Schritten wirst du die Logik des fehleranfälligen Service in ein HystrixCommand kapseln und damit gleich mehrere Stabilitäts-Pattern anwenden. 
