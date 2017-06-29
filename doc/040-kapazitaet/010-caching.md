@@ -6,7 +6,7 @@ Nimm dir für diese Aufgaben **60 Minuten** Zeit.
 ## Einleitung
 Für die Implementierung des Caching werden wir die Spring Cache Funktionalität (https://spring.io/guides/gs/caching/) nutzen.
 
-An welcher/welchen Stelle(n) der Services würdest du die Anwendung eines Caching-Meachnismus als sinnvoll erachten? 
+An welcher/welchen Stelle(n) der Services würdest du die Anwendung eines Caching-Mechanismus als sinnvoll erachten? 
 - Treffe ggf. Annahmen um die Entscheidung zu vereinfachen
 - Diskutiere deine Entscheidung mit den anderen Teilnehmer
 - An welcher Stelle der Anwendung wäre Caching sinnvoll und wo nicht
@@ -24,8 +24,8 @@ public ArrayList<FortuneCookieResource> getList(int offset, int limit) {
 
 *Die Anpassung der Controller-Methode kann entfallen, da diese zudem eine Anpassung der Angular-App erfordern würde.*
 
-## Chaching Data with Spring
-1. Füge die benötigen Abhängikeiten hinzu (```build.gradle```)
+## Caching Data with Spring
+1. Füge die benötigten Abhängikeiten hinzu (```build.gradle```)
 
 ```
 dependencies {
@@ -33,7 +33,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-cache:${version_spring_boot}"
 ```
 
-2. Initialisiere den Caching Meachnismus für SpringBoot mit Hilfe der ```@EnableCaching-Annotation``` in der Klasse ProductServiceApplication. Implementiere in der selben Klasse noch einen Producer für den default CacheManager.
+2. Initialisiere den Caching Mechanismus für Spring Boot mit Hilfe der ```@EnableCaching-Annotation``` in der Klasse ProductServiceApplication. Implementiere in der selben Klasse noch einen Producer für den default CacheManager.
 
 ```java
     @Bean
