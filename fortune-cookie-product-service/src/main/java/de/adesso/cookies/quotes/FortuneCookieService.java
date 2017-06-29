@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 @Service
-public class FortuneCookieDao {
+public class FortuneCookieService {
 
-    private Logger logger = LoggerFactory.getLogger(FortuneCookieDao.class);
+    private Logger logger = LoggerFactory.getLogger(FortuneCookieService.class);
 
     private final Random random = new Random();
     private CookiesDB cookiesDB = new CookiesDB();
@@ -21,6 +21,7 @@ public class FortuneCookieDao {
     @Cacheable("cookies")
     public ArrayList<FortuneCookieResource> getCookies(int offset, int limit) {
 
+        // create some "stability"
         feelingLucky();
         takeYourTime();
 
@@ -59,6 +60,4 @@ public class FortuneCookieDao {
             }
         }
     }
-
-
 }

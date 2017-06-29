@@ -17,11 +17,11 @@ public class ProductServiceController {
     private Logger logger = LoggerFactory.getLogger(ProductServiceController.class);
 
     @Autowired
-    private FortuneCookieDao fortuneCookieDao;
+    private FortuneCookieService fortuneCookieService;
 
     @RequestMapping(method = RequestMethod.GET,path = "/fortuneCookieList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ArrayList<FortuneCookieResource> fortuneCookieList() {
-        return fortuneCookieDao.getCookies(0,20);
+        return fortuneCookieService.getCookies(0,20);
     }
 
     @ExceptionHandler(RuntimeException.class)

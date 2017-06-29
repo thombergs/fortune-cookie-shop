@@ -22,12 +22,12 @@ public class MailingController {
 	public ResponseEntity<Void> sendMail(@RequestBody @Validated MailResource mail) {
 		try {
 
-			result = (String) new MailSender().execute();
+			result = (String) new MailService().execute();
 
 			logger.info(result);
 			return new ResponseEntity<>(HttpStatus.CREATED);
-		}
-		catch (RuntimeException e) {
+
+		}  catch (RuntimeException e) {
 			logger.error("Cannot send mail due to error!", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

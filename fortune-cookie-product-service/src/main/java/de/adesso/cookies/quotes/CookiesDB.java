@@ -4,14 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CookiesDB {
 
     private Logger logger = LoggerFactory.getLogger(CookiesDB.class);
-
     private ArrayList<FortuneCookieResource> list = new ArrayList<>();
 
     CookiesDB() {

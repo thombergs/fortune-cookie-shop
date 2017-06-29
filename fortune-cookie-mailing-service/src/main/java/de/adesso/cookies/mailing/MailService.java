@@ -5,11 +5,11 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 
 import java.util.Random;
 
-public class MailSender extends HystrixCommand {
+public class MailService extends HystrixCommand {
 
     private Random random = new Random();
 
-    protected MailSender() {
+    protected MailService() {
         super(HystrixCommandGroupKey.Factory.asKey("MailServiceGroup"));
     }
 
@@ -18,6 +18,8 @@ public class MailSender extends HystrixCommand {
 
         feelingLucky();
         takeYourTime();
+
+        // SENDING MAIL... :)
 
         return "Mail send successfully!";
     }
