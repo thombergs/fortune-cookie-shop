@@ -4,7 +4,7 @@ In dieser Übung wird die Beispielanwendung um einen Caching-Mechanismus erweite
 Nimm dir für diese Aufgaben **60 Minuten** Zeit.
 
 ## Einleitung
-Für die Implementierung des Caching nutzen wir die Spring Cache Funktionalität (https://spring.io/guides/gs/caching/).
+Für die Implementierung des Caching werden wir die Spring Cache Funktionalität (https://spring.io/guides/gs/caching/) nutzen.
 
 An welcher/welchen Stelle(n) der Services würdest du die Anwendung eines Caching-Meachnismus als sinnvoll erachten? 
 - Treffe ggf. Annahmen um die Entscheidung zu vereinfachen
@@ -25,7 +25,6 @@ public ArrayList<FortuneCookieResource> getList(int offset, int limit) {
 *Die Anpassung der Controller-Methode kann entfallen, da diese zudem eine Anpassung der Angular-App erfordern würde.*
 
 ## Chaching Data with Spring
-
 1. Füge die benötigen Abhängikeiten hinzu (```build.gradle```)
 
 ```
@@ -46,12 +45,10 @@ dependencies {
 3. Annotiere das HystrixCommand ```getCookies```mit der ```@Cacheable```-Annotation. 
 
 ```java
-   @Cacheable("cookies")
+       @Cacheable(value = "cookies", unless = "#result != null and #result.size() == 0")
 ```
 
-4. Test den Cookies Service mit dem SoapUI Lasttest.
-
-Was kannst du beobachten?
+4. Führe anschließend den SoapUI Lasttest für den Cookies Service aus. Was kannst du beobachten?
 
 
 
