@@ -7,3 +7,11 @@ management:
 spring:
   application:
     name: ProductService
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4500

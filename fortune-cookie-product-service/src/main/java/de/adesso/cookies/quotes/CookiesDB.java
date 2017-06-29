@@ -1,5 +1,8 @@
 package de.adesso.cookies.quotes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -7,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CookiesDB {
 
-    private final Random random = new Random();
+    private Logger logger = LoggerFactory.getLogger(CookiesDB.class);
 
     private ArrayList<FortuneCookieResource> list = new ArrayList<>();
 
@@ -50,6 +53,8 @@ public class CookiesDB {
     }
 
     public ArrayList<FortuneCookieResource> getList(int offset, int limit) {
+
+        logger.info("Request to DB - offset: {}, limit: {}", offset, limit);
 
         if(offset >= list.size()) {
             return new ArrayList<>();

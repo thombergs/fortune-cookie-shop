@@ -2,6 +2,7 @@ package de.adesso.cookies.quotes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,12 @@ public class ProductServiceController {
 
     private Logger logger = LoggerFactory.getLogger(ProductServiceController.class);
 
+    @Autowired
+    private FortuneCookieDao fortuneCookieDao;
+
     @RequestMapping(method = RequestMethod.GET,path = "/fortuneCookieList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ArrayList<FortuneCookieResource> fortuneCookieList() {
-
-        ArrayList<FortuneCookieResource> cookieList = new FortuneCookieDao(0, 20).execute();
-
-        logger.info("FortuneCookieDao sent successfully!");
-        return cookieList;
+        return fortuneCookieDao.getCookies(0,20);
     }
 
     @ExceptionHandler(RuntimeException.class)

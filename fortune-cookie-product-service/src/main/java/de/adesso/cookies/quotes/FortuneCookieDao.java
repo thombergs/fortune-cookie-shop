@@ -1,27 +1,25 @@
 package de.adesso.cookies.quotes;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-public class FortuneCookieDao extends HystrixCommand<ArrayList<FortuneCookieResource>> {
+@Service
+public class FortuneCookieDao {
+
+    private Logger logger = LoggerFactory.getLogger(FortuneCookieDao.class);
 
     private final Random random = new Random();
     private CookiesDB cookiesDB = new CookiesDB();
 
-    private int offset = 0;
-    private int limit = 0;
-
-    public FortuneCookieDao(int offset, int limit) {
-        super(HystrixCommandGroupKey.Factory.asKey("ProductServiceGroup"),4500);
-
-        this.offset = offset;
-        this.limit = limit;
-    }
-
-    @Override
-    protected ArrayList<FortuneCookieResource> run() throws Exception {
+    @HystrixCommand(fallbackMethod = "getCookiesFallback", groupKey = "ProductServiceGroup")
+    @Cacheable("cookies")
+    public ArrayList<FortuneCookieResource> getCookies(int offset, int limit) {
 
         feelingLucky();
         takeYourTime();
@@ -29,15 +27,11 @@ public class FortuneCookieDao extends HystrixCommand<ArrayList<FortuneCookieReso
         return cookiesDB.getList(offset, limit);
     }
 
-    @Override
-    protected ArrayList<FortuneCookieResource> getFallback() {
+    public ArrayList<FortuneCookieResource> getCookiesFallback(int offset, int limit) {
+        logger.warn("Failed...");
+
         // Fail silent
         return new ArrayList<>();
-    }
-
-    @Override
-    protected String getCacheKey() {
-        return String.valueOf(offset) + "-" + String.valueOf(limit);
     }
 
     private void feelingLucky() {
