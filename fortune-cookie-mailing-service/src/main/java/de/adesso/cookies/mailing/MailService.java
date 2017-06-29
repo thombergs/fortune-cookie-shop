@@ -2,6 +2,7 @@ package de.adesso.cookies.mailing;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import org.omg.CORBA.TIMEOUT;
 
 import java.util.Random;
 
@@ -10,7 +11,7 @@ public class MailService extends HystrixCommand {
     private Random random = new Random();
 
     protected MailService() {
-        super(HystrixCommandGroupKey.Factory.asKey("MailServiceGroup"));
+        super(HystrixCommandGroupKey.Factory.asKey("MailServiceGroup"), 4500);
     }
 
     @Override
