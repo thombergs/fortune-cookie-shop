@@ -1,13 +1,9 @@
 package de.adesso.cookies.quotes;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CookiesDB {
-
-    private final Random random = new Random();
 
     private ArrayList<FortuneCookieResource> list = new ArrayList<>();
 
