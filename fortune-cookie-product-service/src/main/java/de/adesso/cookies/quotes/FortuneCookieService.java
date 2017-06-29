@@ -18,7 +18,7 @@ public class FortuneCookieService {
     private CookiesDB cookiesDB = new CookiesDB();
 
     @HystrixCommand(fallbackMethod = "getCookiesFallback", groupKey = "ProductServiceGroup")
-    @Cacheable("cookies")
+    @Cacheable(value = ProductServiceApplication.COOKIES, unless = "#result != null and #result.size() == 0")
     public ArrayList<FortuneCookieResource> getCookies(int offset, int limit) {
 
         // create some "stability"
@@ -29,7 +29,7 @@ public class FortuneCookieService {
     }
 
     public ArrayList<FortuneCookieResource> getCookiesFallback(int offset, int limit) {
-        logger.warn("Failed...");
+        logger.warn("Service request failed. Sending default.");
 
         // Fail silent
         return new ArrayList<>();
