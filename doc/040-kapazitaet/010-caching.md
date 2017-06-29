@@ -1,21 +1,20 @@
 # Caching anwenden
-
-In dieser Übung wird die Beispielanwendung um einen Caching-Mechanimus erweitert, sowie eine Paging Funktion für den Product implementiert.
+In dieser Übung wird die Beispielanwendung um einen Caching-Mechanismus erweitert.
 
 Nimm dir für diese Aufgaben **60 Minuten** Zeit.
 
 ## Einleitung
-Für die Impelmentierung des Caching nutzen wir die Hystrix ``Request Cache``` Funktionalität. 
+Für die Implementierung des Caching nutzen wir die Spring Cache Funktionalität (https://spring.io/guides/gs/caching/).
 
-An welche Stelle der Anwendung würdest du die Anwendung eines Caching Meachnismus als sinnvoll erachten? 
-- Treffe ggf. Annahmen um die Entscheidung zu Vereinfachen
+An welcher/welchen Stelle(n) der Services würdest du die Anwendung eines Caching-Meachnismus als sinnvoll erachten? 
+- Treffe ggf. Annahmen um die Entscheidung zu vereinfachen
 - Diskutiere deine Entscheidung mit den anderen Teilnehmer
-- An welcher Stelle der Anwendung wäre Caching sinnvoll und wo nicht (Frequenz?)
+- An welcher Stelle der Anwendung wäre Caching sinnvoll und wo nicht
 
 ## Pagination
-Der Cookie Service liefert zu Beginn alle vorhanden Cookies. Wieso kann das zu einem Problem werden?
+Der Controller des ```fortune-cookie-product-service``` ist nicht parametrisierbar und liefert zu Beginn alle vorhandenen Cookies. Wieso kann das zu einem Problem (besonders in Verbindung mit einem Cache) führen?
 
-Um dieses Problem zu beheben führe bitte eine Paginierung für die ```getList``` Methode der CookiesDB ein und nutze diese im Controller und der ```FortuneCookieDao``` Klasse.
+1. Führe, Um das Problem zu beheben, bitte eine Paginierung für die ```getList``` Methode der ```CookiesDB```-Klasse ein und nutze diese im zugehörigen Controller und der ```FortuneCookieDao```-Klasse.
 
 ```java
 public ArrayList<FortuneCookieResource> getList(int offset, int limit) {
@@ -23,18 +22,36 @@ public ArrayList<FortuneCookieResource> getList(int offset, int limit) {
 }
 ``` 
 
-## Request Cache
-Request caching kann bei ```HystrixCommand``` über die Implementierung der ```getCacheKey()```-Methode aktiviert werden.
+*Die Anpassung der Controller-Methode kann entfallen, da diese zudem eine Anpassung der Angular-App erfordern würde.*
 
-Der Cache Key muss dabei eindeutig für die Anfrage sein. Die Kombination von Offset und Limit bieten sich hier als eindeutiger Schlüssel an.
+## Chaching Data with Spring
+
+1. Füge die benötigen Abhängikeiten hinzu (```build.gradle```)
+
+```
+dependencies {
+    ...
+    compile "org.springframework.boot:spring-boot-starter-cache:${version_spring_boot}"
+```
+
+2. Initialisiere den Caching Meachnismus für SpringBoot mit Hilfe der ```@EnableCaching-Annotation``` in der Klasse ProductServiceApplication. Implementiere in der selben Klasse noch einen Producer für den default CacheManager.
 
 ```java
-    @Override
-    protected String getCacheKey() {
-        return String.valueOf(offset) + "-" + String.valueOf(limit);
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("cookies");
     }
 ```
 
-Folge für die Implementierung der Anleitung unter: https://github.com/Netflix/Hystrix/wiki/How-To-Use#Caching
+3. Annotiere das HystrixCommand ```getCookies```mit der ```@Cacheable```-Annotation. 
 
-**Prüfe anschließend das Verhalten über die Lasttests bzw. einen Unit-Test.**
+```java
+   @Cacheable("cookies")
+```
+
+4. Test den Cookies Service mit dem SoapUI Lasttest.
+
+Was kannst du beobachten?
+
+
+
