@@ -1,7 +1,10 @@
 package de.adesso.cookies.mailing;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @ConfigurationProperties("fortune-cookies")
 public class MailingController {
 
-	private Logger logger = LoggerFactory.getLogger(MailingController.class);
+  private Logger logger = LoggerFactory.getLogger(MailingController.class);
 
-	MailService mailService = new MailService();
+  private Timer timer;
 
-	@PostMapping("/send")
-	public ResponseEntity<Void> sendMail(@RequestBody @Validated MailResource mail) {
-		try {
+  MailService mailService = new MailService();
 
-			mailService.sendMail(mail);
-			return new ResponseEntity<>(HttpStatus.CREATED);
+  @Autowired
+  public MailingController(MetricRegistry metricRegistry) {
+    this.timer = metricRegistry.timer(MailingController.class.getSimpleName());
+  }
 
-		}  catch (RuntimeException e) {
-			logger.error("Cannot send mail due to error!", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+  @PostMapping("/send")
+  public ResponseEntity<Void> sendMail(@RequestBody @Validated MailResource mail) {
+    Timer.Context context = timer.time();
+    try {
+
+      mailService.sendMail(mail);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+
+    } catch (RuntimeException e) {
+      logger.error("Cannot send mail due to error!", e);
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } finally {
+      context.stop();
+    }
+  }
 
 }

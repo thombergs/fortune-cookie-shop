@@ -1,5 +1,7 @@
 package de.adesso.cookies.quotes;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,24 @@ public class ProductServiceController {
     @Autowired
     private FortuneCookieService fortuneCookieService;
 
+    private Timer timer;
+
+    @Autowired
+    public ProductServiceController(MetricRegistry metricRegistry) {
+        this.timer = metricRegistry.timer(ProductServiceController.class.getSimpleName());
+    }
+
     @RequestMapping(method = RequestMethod.GET,path = "/fortuneCookieList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ArrayList<FortuneCookieResource> getFortuneCookieList() {
+        Timer.Context context = timer.time();
+        try {
+            ArrayList<FortuneCookieResource> cookieList = fortuneCookieService.getCookies();
 
-        ArrayList<FortuneCookieResource> cookieList = fortuneCookieService.getCookies();
-
-        logger.info("FortuneCookies sent successfully!");
-        return cookieList;
+            logger.info("FortuneCookies sent successfully!");
+            return cookieList;
+        }finally {
+            context.stop();
+        }
     }
 
     @ExceptionHandler(RuntimeException.class)
