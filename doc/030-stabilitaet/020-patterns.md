@@ -58,7 +58,7 @@ Die folgenden Bibliotheken müssen in ```build.gradle``` als Abhängigkeit (depe
 4. Implementiere nun das Fail-Fast Pattern mit Hilfe der ```getCookiesFallback```-Methode. Was wäre ein sinnvoller Fallback-Rückgabewert?
 
 ```java
-    public ArrayList<FortuneCookieResource> getCookiesFallback(int offset, int limit) {
+    public ArrayList<FortuneCookieResource> getCookiesFallback() {
 ```
 
 5. Konfiguriere noch ein passendes Timeout mit der Definition von ```execution.isolation.thread.timeoutInMilliseconds``` innerhalb der Konfigurationsdatei der Anwendung (https://github.com/Netflix/Hystrix/wiki/Configuration)
