@@ -36,8 +36,10 @@ Hystrix unterstützt an dieser Stelle die Fail-Silent-Strategie, die bspw. durch
 ## Stabilisierung des fortune-cookie-product-service
 Der ```FortuneCookieService``` lädt aus einer "simulierten" Cookies-Datenbank alle vorhandenen Cookies (30). Antwortet der Service bzw. die Datenbank nicht oder zu langsam, werden nach und nach alle Threads der Anwendung blockiert.
 
-### Kapselung in ein HystrixCommand
+### Kapselung in ein @HystrixCommand
 In sechs einfachen Schritten wirst du die Logik des fehleranfälligen Service  über die ```@HystrixCommand```-Annotation in ein HystrixCommand kapseln und damit gleich mehrere Stabilitäts-Pattern anwenden. Denke daran geeignete Logging-Ausgaben festzulegen.
+
+**Siehe dazu:** https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-javanica
 
 1. Erweitere die Klasse ```ProductServiceApplication``` um die Annotation ```@EnableHystrix``` (sofern noch nicht geschehen).
 
