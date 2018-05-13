@@ -1,3 +1,4 @@
+bin/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -25,3 +26,6 @@ nbdist/
 
 ### Gradle ###
 .gradle
+
+#other
+*.DS_Store
