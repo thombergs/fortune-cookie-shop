@@ -24,7 +24,7 @@ Die folgenden Bibliotheken müssen in ```build.gradle``` als Abhängigkeit (depe
 
 Setze zudem einen GroupKey in dem Constructor der HystrixCommand-Klasse.
 ```java
-        super(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"));
+    super(HystrixCommandGroupKey.Factory.asKey("MailServiceGroup"), 4500);
 ```
 
 2. Implementiere nun das Fail-Fast Pattern als Fail-Silent, indem du die ```getFallback()```-Methode überschreibst. Was wäre ein sinnvoller Fallback-Rückgabewert?
