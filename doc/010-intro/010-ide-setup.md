@@ -56,7 +56,12 @@ gradlew.bat fortune-cookie-mailing-service:bootrun
 
 ## Angular App starten
 
-Im Ordner `fortune-cookie-app` den Befehl `ng serve` ausführen, um die Angular App zu starten. 
+Im Ordner `fortune-cookie-app` den Befehl `npm run start` ausführen, um die Angular App zu starten. 
+
+## Alle Anwendungen auf einmal starten
+
+Falls du Windows benutzt, kannst du auch das Skript `start-all.bat` nutzen, welches alle 
+Server-Anwendungen und die Angular App auf einmal startet.
 
 ## Anwendung im Browser testen
 
