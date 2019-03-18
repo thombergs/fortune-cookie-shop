@@ -14,7 +14,7 @@ An welcher/welchen Stelle(n) der Services würdest du die Anwendung eines Cachin
 ## Pagination
 Der Controller des ```fortune-cookie-product-service``` ist nicht parametrisierbar und liefert zu Beginn alle vorhandenen Cookies. Wieso kann das zu einem Problem (besonders in Verbindung mit einem Cache) führen?
 
-1. Führe, Um das Problem zu beheben, bitte eine Paginierung für die ```getList``` Methode der ```CookiesDB```-Klasse ein und nutze diese im zugehörigen Controller und der ```FortuneCookieDao```-Klasse.
+1. Führe, um das Problem zu beheben, eine Paginierung für die ```getList``` Methode der ```CookiesDB```-Klasse ein und nutze diese im zugehörigen Controller und der ```FortuneCookieDao```-Klasse.
 
 ```java
 public ArrayList<FortuneCookieResource> getList(int offset, int limit) {
@@ -45,7 +45,7 @@ dependencies {
 3. Annotiere das HystrixCommand ```getCookies```mit der ```@Cacheable```-Annotation. 
 
 ```java
-       @Cacheable(value = "cookies", unless = "#result != null and #result.size() == 0")
+       @Cacheable(value = "cookies")
 ```
 
 4. Führe anschließend den SoapUI Lasttest für den Cookies Service aus. Was kannst du beobachten?
