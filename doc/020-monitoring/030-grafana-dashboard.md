@@ -6,7 +6,7 @@ ca. **30 Minuten** Zeit.
 
 ## Grafana installieren
 
-Grafana in Version 4.3.2 von (https://grafana.com/grafana/download)[https://grafana.com/grafana/download]
+Grafana in Version 6.0.1 von (https://grafana.com/grafana/download)[https://grafana.com/grafana/download]
 herunterladen und an einer beliebigen Stelle entpacken.
 
 ## Prometheus als Datenquelle einrichten

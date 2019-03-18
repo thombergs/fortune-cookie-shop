@@ -4,7 +4,7 @@ Nimm dir für die folgenden Aufgaben ca. **30 Minuten** Zeit.
 
 ## Prometheus installieren
 
-Unter https://prometheus.io/download/ die Version 1.7.1 von
+Unter https://prometheus.io/download/ die Version 2.8.0 von
 Prometheus herunterladen und in einem Verzeichnis Deiner Wahl
 entpacken.
 
@@ -18,7 +18,7 @@ Im Getting Started Guide wirst du einige Metriken abfragen, die der Prometheus-S
 
 ## Expressions
 
-Spiele etwas mit der expression language herum, um einige Metriken abzufragen (siehe (https://prometheus.io/docs/querying/basics/)[https://prometheus.io/docs/querying/basics/]).
+Spiele etwas mit der Expression Language herum, um einige Metriken abzufragen (siehe (https://prometheus.io/docs/querying/basics/)[https://prometheus.io/docs/querying/basics/]).
 
 Beantworte die folgenden Fragen:
 

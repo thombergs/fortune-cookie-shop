@@ -6,10 +6,10 @@ Aufgaben ca. **60 Minuten** Zeit.
 
 ## Metriken erfassen
 
-Für die Erfassung der Metriken nutzen wir Dropwizard Metrics. Füge die folgenden
-Metriken (und ggf. weitere, die du für sinnvoll erachtest) in die Server-Anwendungen
-ein. Nutze als Grundlage das untenstehende Code-Beispiel oder die Webseite unter
-(http://metrics.dropwizard.io/3.2.2/getting-started.html)[http://metrics.dropwizard.io/3.2.2/getting-started.html].
+Für die Erfassung der Metriken nutzen wir den "Simple Client" für Java von Prometheus. 
+
+Füge die folgenden Metriken (und ggf. weitere, die du für sinnvoll erachtest) in 
+die Server-Anwendungen ein. Nutze als Grundlage das untenstehende Code-Beispiel.
 
 * Durchsatz von Warenkorb-Checkouts pro Sekunde
 * Durchsatz von versendeten Mails pro Sekunde
@@ -18,28 +18,54 @@ ein. Nutze als Grundlage das untenstehende Code-Beispiel oder die Webseite unter
 * Antwortzeiten des Mailversands
 * Antwortzeiten von Produkt-Listing-Anfragen
 
-**Beispiel-Code zum Einbinden eines Dropwizard-Timers:**
+**Beispiel-Code zum Einbinden eines Counters:**
 
 ```java
-@Service
-public class MyService { 
-    
-    private Timer timer;
+public class MyService {
 
-    @Autowired
-    public MyService(MetricRegistry metricRegistry) {
-        this.timer = metricRegistry.timer(MyService.class.getSimpleName());
+  private Counter counter;
+
+  public MailService() {
+    this.counter = Counter.build()
+            .name("my_counter")
+            .help("counts invocations of doSomething()")
+            .register();
+  }
+
+  public void doSomething() {
+    counter.inc();
+  }
+}
+```
+
+**Beispiel-Code zum Einbinden eines Timers:**
+
+```java
+public class MyService {
+
+  private Histogram timer;
+
+  public MyService() {
+    this.timer = Histogram.build()
+            .buckets(.01, .025, .05, .075, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1, 1.5, 2, 2.5, 5, 7.5, 10)
+            .name("duration_in_seconds")
+            .labelNames("endpoint")
+            .help("duration of an HTTP call")
+            .register();
+  }
+
+  public void doSomething() {
+    Histogram.Timer timer = this.timer
+            .labels("/my_endpoint")
+            .startTimer();
+    try {
+
+      // do something
+    } finally {
+      timer.observeDuration();
     }
-    
-    public void timedMethod(){
-        Timer.Context context = timer.time();
-        try {
-            // do something 
-        }finally {
-            context.stop();
-        }
-    }
-    
+  }
+
 }
 ```
 
@@ -47,61 +73,37 @@ public class MyService {
 
 * an welchen Stellen ist es am sinnvollsten, die Erfassung der Metriken einzubauen? (Rest-Controller? Service-Schicht?)
 * wie könnte man die Fehlerrate eines Service als Metrik erfassen?
-* diskutiert die einzelnen Metriken, die DropWizard erzeugt und findet heraus, was sie genau bedeuten
-  * fiveMinuteRate
-  * 99thPercentile
-  * median
-  * meanRate
-  * mean
 
-Um zu prüfen, ob die Metriken erfasst werden, greife auf den "/metrics"-Endpoint der 
-jeweiligen Serveranwendung zu (beachte, dass Metriken erst angezeigt werden, nachdem sie durch eine
-Aktion zum ersten mal berechnet wurden):
+## Metriken im Prometheus-Format bereitstellen
 
-**Metrics-Endpunkte der jeweiligen Serveranwendung:**
-
-* fortune-cookie-fulfillment-service: http://localhost:8081/metrics
-* fortune-cookie-mailing-service: http://localhost:8082/metrics
-* fortune-cookie-product-service: http://localhost:8083/metrics
-
-
-## Metriken in Prometheus-Format transformieren
-
-Die Metriken liegen bisher nur im JSON-Format vor. Damit sie von Prometheus gescraped werden können,
-müssen sie in das Prometheus-Datenformat übertragen werden. Baue hierfür die folgende Klasse in 
+Die Metriken liegen bisher nur im Speicher der Anwendungen vor. Damit sie von Prometheus gescraped werden können,
+müssen sie in das Prometheus-Datenformat übertragen und per HTTP bereitgestellt werden. Baue hierfür die folgende Klasse in 
 jede der drei Service-Anwendungen ein:
 
 ```java
 @Configuration
-@EnablePrometheusEndpoint
-public class PrometheusConfiguration {
-
-  private MetricRegistry dropwizardMetricRegistry;
-
-  @Autowired
-  public PrometheusConfiguration(MetricRegistry dropwizardMetricRegistry) {
-    this.dropwizardMetricRegistry = dropwizardMetricRegistry;
-  }
+class PrometheusConfiguration {
 
   @PostConstruct
-  public void registerPrometheusCollectors() {
+  void registerPrometheusCollectors() {
     CollectorRegistry.defaultRegistry.clear();
     new StandardExports().register();
     new MemoryPoolsExports().register();
-    new DropwizardExports(dropwizardMetricRegistry).register();
-    ... // more metric exports
   }
-  
+
   @Bean
-  public SpringBootMetricsCollector springBootMetricsCollector(Collection<PublicMetrics> metrics){
-      SpringBootMetricsCollector springBootMetricsCollector = new SpringBootMetricsCollector(metrics);
-      springBootMetricsCollector.register();
-      return springBootMetricsCollector;
+  ServletRegistrationBean registerPrometheusServlet() {
+    return new ServletRegistrationBean(new MetricsServlet(), "/prometheus");
   }
 }
 ```
 
-Prüfe, ob die Metriken über den Endpoint `/prometheus` im Prometheus-Format angeboten werden.
+Prüfe, ob die Metriken über den Endpoint `/prometheus` im Prometheus-Format angeboten werden. Die URLs für die
+verschiedenen Server sind die folgenden:
+
+* **fulfillment-service:** http://localhost:8081/prometheus
+* **mailing-service:** http://localhost:8082/prometheus
+* **product-service:** http://localhost:8083/prometheus
 
 ## Metriken mit Prometheus einsammeln
 
