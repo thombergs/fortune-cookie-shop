@@ -9,8 +9,8 @@ Nimm dir für diese Aufgaben **30 Minuten** Zeit.
  
    Füge dafür die folgenden Imports zur ```build.gradle``` hinzu:
    ```
-   compile "com.netflix.hystrix:hystrix-core:1.5.10"
-   compile "com.netflix.hystrix:hystrix-javanica:1.5.10"
+   compile "com.netflix.hystrix:hystrix-core:1.5.18"
+   compile "com.netflix.hystrix:hystrix-javanica:1.5.18"
    compile "org.springframework.cloud:spring-cloud-starter-hystrix:1.3.0.RELEASE"
    ```
 2. Der Hystrix-Endpoint muss über einen definierbaren Management-Port angesprochen werden. Erweitere dafür die Konfigurationsdatei (```application.yml```) des Service um einen geeigneten Management-Port und starte die Applikation neu. z.B.:

@@ -49,6 +49,3 @@ dependencies {
 ```
 
 4. Führe anschließend den SoapUI Lasttest für den Cookies Service aus. Was kannst du beobachten?
-
-
-
