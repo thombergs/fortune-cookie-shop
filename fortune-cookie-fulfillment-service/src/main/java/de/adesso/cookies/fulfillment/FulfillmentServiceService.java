@@ -2,6 +2,7 @@ package de.adesso.cookies.fulfillment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -17,6 +18,7 @@ public class FulfillmentServiceService {
 
     private Random random = new Random();
 
+    @HystrixCommand(fallbackMethod = "mailFallback",groupKey = "FulfillmentServiceGroup")
     public void sendMail(UserResource userResource) {
 
         try {
@@ -53,6 +55,10 @@ public class FulfillmentServiceService {
         } catch (JsonProcessingException e) {
             logger.error("jsonPrecessingException", e);
         }
+    }
+
+    public void mailFallback(UserResource userResource) {
+        logger.info("Mail sent fallback-Method completed!");
     }
 
     private void feelingLucky() {

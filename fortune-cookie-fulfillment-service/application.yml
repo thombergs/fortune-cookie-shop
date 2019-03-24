@@ -4,3 +4,11 @@ server:
 spring:
   application:
     name: FulfillmentService
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4500

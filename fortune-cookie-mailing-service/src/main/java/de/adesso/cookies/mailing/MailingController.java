@@ -16,13 +16,11 @@ public class MailingController {
 
 	private Logger logger = LoggerFactory.getLogger(MailingController.class);
 
-	MailService mailService = new MailService();
-
 	@PostMapping("/send")
 	public ResponseEntity<Void> sendMail(@RequestBody @Validated MailResource mail) {
 		try {
 
-			mailService.sendMail(mail);
+			new MailService(mail).execute();
 			return new ResponseEntity<>(HttpStatus.CREATED);
 
 		}  catch (RuntimeException e) {

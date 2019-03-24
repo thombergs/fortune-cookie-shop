@@ -21,11 +21,7 @@ public class ProductServiceController {
 
     @RequestMapping(method = RequestMethod.GET,path = "/fortuneCookieList", produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ArrayList<FortuneCookieResource> getFortuneCookieList() {
-
-        ArrayList<FortuneCookieResource> cookieList = fortuneCookieService.getCookies();
-
-        logger.info("FortuneCookies sent successfully!");
-        return cookieList;
+        return fortuneCookieService.getCookies(0,20);
     }
 
     @ExceptionHandler(RuntimeException.class)

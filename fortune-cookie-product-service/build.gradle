@@ -9,6 +9,12 @@ dependencies {
     compile "io.prometheus:simpleclient_spring_boot:0.0.22"
     compile "io.prometheus:simpleclient_hotspot:0.0.22"
 
+    compile "com.netflix.hystrix:hystrix-core:1.5.18"
+    compile "com.netflix.hystrix:hystrix-javanica:1.5.18"
+    compile "org.springframework.cloud:spring-cloud-starter-hystrix:1.3.0.RELEASE"
+
+    compile "org.springframework.boot:spring-boot-starter-cache:${version_spring_boot}"
+
     runtime "org.springframework.boot:spring-boot-starter-tomcat:${version_spring_boot}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${version_spring_boot}"

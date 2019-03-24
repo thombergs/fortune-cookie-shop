@@ -4,3 +4,14 @@ server:
 spring:
   application:
     name: ProductService
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4500
+
+management:
+  port: 8003
