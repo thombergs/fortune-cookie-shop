@@ -81,8 +81,8 @@ public class FulfillmentServiceController {
     }
 
     private Callable timedOut(Runnable function) {
-        // Create Supplier<Future> from function
-        Future futureSupplier = Executors.newSingleThreadExecutor().submit(function);
+        // Create Future from function
+        Future future = Executors.newSingleThreadExecutor().submit(function);
 
         // Configure time limiter
         TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
@@ -91,7 +91,7 @@ public class FulfillmentServiceController {
                 .build();
         TimeLimiter timeLimiter = TimeLimiter.of(timeLimiterConfig);
 
-        // Decorate future supplier with time limiter
-        return TimeLimiter.decorateFutureSupplier(timeLimiter, () -> futureSupplier);
+        // Return Callable wrapped with timeout
+        return TimeLimiter.decorateFutureSupplier(timeLimiter, () -> future);
     }
 }
