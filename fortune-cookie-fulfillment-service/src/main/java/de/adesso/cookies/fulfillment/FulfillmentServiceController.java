@@ -1,6 +1,9 @@
 package de.adesso.cookies.fulfillment;
 
-import io.prometheus.client.CollectorRegistry;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.timelimiter.TimeLimiter;
+import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.prometheus.client.Histogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Duration;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/fulfillment")
@@ -42,7 +50,11 @@ public class FulfillmentServiceController {
             .startTimer();
     try {
 
-      fulfillmentService.sendMail(submitShoppingCart.getUser());
+            runWithRetry(() ->
+                    timedOut(() ->
+                            fulfillmentService.sendMail(submitShoppingCart.getUser())
+                    )
+            );
 
       logger.info("Shopping cart successfully submitted!");
       return new ResponseEntity<>(HttpStatus.CREATED);
@@ -54,5 +66,32 @@ public class FulfillmentServiceController {
     }
   }
 
+    private void runWithRetry(Runnable function) {
+        // Configure Retry strategy
+        RetryConfig retryConfig = RetryConfig.custom()
+                .maxAttempts(5)
+                .build();
+        Retry retry = Retry.of("Void", retryConfig);
 
+        // Decorate function with Retry
+        Runnable decoratedFunction = Retry.decorateRunnable(retry, function);
+
+        // Call decorated function
+        decoratedFunction.run();
+    }
+
+    private Callable timedOut(Runnable function) {
+        // Create Supplier<Future> from function
+        Future futureSupplier = Executors.newSingleThreadExecutor().submit(function);
+
+        // Configure time limiter
+        TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
+                .timeoutDuration(Duration.ofMillis(4500))
+                .cancelRunningFuture(true)
+                .build();
+        TimeLimiter timeLimiter = TimeLimiter.of(timeLimiterConfig);
+
+        // Decorate future supplier with time limiter
+        return TimeLimiter.decorateFutureSupplier(timeLimiter, () -> futureSupplier);
+    }
 }

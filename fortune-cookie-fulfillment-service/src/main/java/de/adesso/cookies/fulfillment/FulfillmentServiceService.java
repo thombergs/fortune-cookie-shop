@@ -2,13 +2,17 @@ package de.adesso.cookies.fulfillment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.Random;
+import java.util.function.Supplier;
 
 @Service
 public class FulfillmentServiceService {
@@ -44,7 +48,7 @@ public class FulfillmentServiceService {
 
             HttpEntity<String> entity = new HttpEntity<String>(mapper.writeValueAsString(mailResource),headers);
 
-            ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8082/send",entity,String.class);
+            ResponseEntity<String> response = resilientRestTemplateCall(() -> restTemplate.postForEntity("http://localhost:8082/send", entity, String.class));
 
             if(response.getStatusCode().equals(HttpStatus.CREATED))
                 logger.info("Mail sent successfully!");
@@ -53,6 +57,23 @@ public class FulfillmentServiceService {
         } catch (JsonProcessingException e) {
             logger.error("jsonPrecessingException", e);
         }
+    }
+
+    private ResponseEntity<String> resilientRestTemplateCall(Supplier<ResponseEntity<String>> function) {
+        // Configure Retry strategy
+        RetryConfig retryConfig = RetryConfig.custom()
+                .maxAttempts(5)
+                .waitDuration(Duration.ofMillis(20))
+                .retryOnResult(response -> !((ResponseEntity<String>) response).getStatusCode().equals(HttpStatus.CREATED))
+                .build();
+        Retry retry = Retry.of("mailer", retryConfig);
+
+        // Decorate function with Retry
+        Supplier<ResponseEntity<String>> decoratedFunction = Retry.decorateSupplier(retry, function);
+
+        // Call decorated function
+        return decoratedFunction.get();
+
     }
 
     private void feelingLucky() {
