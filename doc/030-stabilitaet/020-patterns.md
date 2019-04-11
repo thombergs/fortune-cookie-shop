@@ -1,89 +1,92 @@
 # Den Cookie Shop stabilisieren
-In dieser Übung werden die Services des Shops mit der Hilfe von Hystrix durch Stabilitäts-Pattern stabilisiert. 
+In dieser Übung werden die Services des Shops mit der Hilfe von Resilience4j durch Stabilitäts-Patterns stabilisiert. 
 
 Nimm dir für diese Aufgaben **45 Minuten** Zeit.
 
 ## Stabilisierung des fortune-cookie-mailing-service
-Der ```MailService``` simuliert den Versand einer Mail. Antwortet der Service nicht oder zu langsam, so werden nach und nach alle Threads der Anwendung blockiert.
+Der `MailService` simuliert den Versand einer Mail. Antwortet der Service nicht oder zu langsam, so werden nach und nach alle Threads der Anwendung blockiert.
 
-In dieser Aufgabe wirst du in drei einfachen Schritten die Logik des fehleranfälligen Service in ein HystrixCommand kapseln und damit gleich mehrere Stabilitäts-Pattern anwenden.
+In dieser Aufgabe wirst du in zwei einfachen Schritten die Logik des fehleranfälligen Service mit Resilience4j absichern.
 
-**Siehe:** https://github.com/Netflix/Hystrix/wiki/How-To-Use#Hello-World **und** http://netflix.github.io/Hystrix/javadoc/index.html?com/netflix/hystrix/HystrixCommand.html
+### Resilience4j Module
+Die Resilience4j-Library bietet folgende Kernmodule an (siehe [Dokumentation](http://resilience4j.github.io/resilience4j/#_usage_guide)):
+- `resilience4j-circuitbreaker`: Circuit breaking
+- `resilience4j-ratelimiter`: Rate limiting
+- `resilience4j-bulkhead`: Bulkheading
+- `resilience4j-retry`: Automatic retrying
+- `resilience4j-cache`: Response caching
+- `resilience4j-timelimiter`: Timeout handling
 
-### Kapselung in ein HystrixCommand
-In dieser Aufgabe sollst du den ```fortune-cookie-mailing-service``` stabilisieren, in dem du die Logik der ```sendMail(MailResource mail)```-Methode aus der Klasse MailService in ein HystrixCommand kapselst. Implementiere zudem eine Fail-Silent Strategie und wähle geeignete Logging-Ausgaben.
+Für unseren fehleranfälligen Service machen die Module `retry` und `timelimiter` Sinn, also füge diese zu den Dependencies hinzu.
 
-1. Kapsel die Logik der Methode ```sendMail(MailResource mail)``` aus der Klasse ```MailService``` in einem HystrixCommand. Beachte dabei die geeignete Wahl eines Timeouts (```executionIsolationThreadTimeoutinMilliseconds```). 
-
-Die folgenden Bibliotheken müssen in ```build.gradle``` als Abhängigkeit (dependencies) hinzugefügt werden:
-```
-    compile "com.netflix.hystrix:hystrix-core:1.5.18"
-    compile "com.netflix.hystrix:hystrix-javanica:1.5.18"
-    compile "org.springframework.cloud:spring-cloud-starter-hystrix:1.3.0.RELEASE"
-```
-
-Setze zudem einen GroupKey in dem Constructor der HystrixCommand-Klasse.
+### Retry für `sendMail()`
+In dieser Aufgabe sollst du den `fortune-cookie-mailing-service` stabilisierung, indem ihr die Logik der `sendMail(MailResource)`-Methode aus der Klasse MailService mit einem Retry absichert. Retries führen eine Funktion bei einem Fehlerfall erneut aus solange die vorgegebene Anzahl der Versuche nicht überschritten wurde. Dazu verwendet Resilience4j das Decorator-Pattern:
 ```java
-    super(HystrixCommandGroupKey.Factory.asKey("MailServiceGroup"), 4500);
+// Aus dem Funktionsausruf ein Runnable machen
+Runnable function = ...;
+
+// Retry-Strategie konfigurieren
+RetryConfig retryConfig = RetryConfig.custom()
+        .maxAttempts(5)                       // 5 Versuche
+        .waitDuration(Duration.ofMillis(20))  // Zwischen jedem Versuch 20ms warten
+        .build();
+Retry retry = Retry.of("someName", retryConfig);
+
+// Runnable "dekorieren"
+Runnable decoratedFunction = Retry.decorateRunnable(retry, function);
+
+// Aufruf
+decoratedFunction.run();
 ```
+Der Aufruf wird bis zu 5 mal wiederholt ehedem das Runnable "aufgibt".
+### TimeLimiter
+Auf ganz ähnliche Weise kann ein TimeLimiter erstellt werden.
+TimeLimiter kapseln ein Future und brechen nach einer voreingestellten Dauer den Aufruf ab.
+Hierfür wird ebenfalls das Decorator-Pattern verwendet:
+```java
+// Aus dem Funktionsaufruf ein Future machen
+Future future = Executors.newSingleThreadExecutor().submit(function);
 
-2. Implementiere nun das Fail-Fast Pattern als Fail-Silent, indem du die ```getFallback()```-Methode überschreibst. Was wäre ein sinnvoller Fallback-Rückgabewert?
+// TimeLimiter konfigurieren
+TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
+        .timeoutDuration(Duration.ofMillis(4500)) // Timeout bei 4500ms
+        .cancelRunningFuture(true)                // Das Future soll gecancelt werden
+        .build();
+TimeLimiter timeLimiter = TimeLimiter.of(timeLimiterConfig);
 
-Hystrix unterstützt an dieser Stelle die Fail-Silent-Strategie, die bspw. durch Rückgabe von ```null``` oder einer leeren Liste umgesetzt wird. (Alternative Fallback-Methoden sind der Aufruf eines Backup Systems oder die Rückgabe gecachter Daten.)
-
-3. Rufe abschließend das erstellte HystrixCommand im Controller synchron auf.
-
-__Hinweis:__ Das HystrixCommand definiert über ein Generic der _Return Type_ (```HystrixCommand<R>```). Um das Problem des fehlenden Rückgabewertes zu umgehen kannst du die Methode so umschreiben, dass ein Wert (z.B. String) zurückgegeben wird oder mit dem Typ ```Void``` und ```return null``` eine Rückgabe "unterbinden".
+// Supplier<Future> mit timeLimiter "dekorieren"
+Callable decoratedFutureSupplier = TimeLimiter.decorateFutureSupplier(timeLimiter, () -> future);
+```
+Versuche, die folgenden Fragen zu beantworten: Wie müssen Retry und TimeLimiter miteinander kombiniert werden, um Anfragen an den fehleranfälligen Service abzusichern?
+Wie muss der Code aussehen, wenn auf einen Rückgabewert gewartet werden muss?
+Wie lässt sich der Code wiederverwendbar machen?
 
 ## Stabilisierung des fortune-cookie-product-service
-Der ```FortuneCookieService``` lädt aus einer "simulierten" Cookies-Datenbank alle vorhandenen Cookies (30). Antwortet der Service bzw. die Datenbank nicht oder zu langsam, werden nach und nach alle Threads der Anwendung blockiert.
+Der `FortuneCookieService` lädt aus einer "simulierten" Cookies-Datenbank alle vorhandenen Cookies (30). Antwortet der Service bzw. die Datenbank nicht oder zu langsam, werden nach und nach alle Threads der Anwendung blockiert.
 
-### Absicherung mit der @HystrixCommand-Annotation
-In sechs einfachen Schritten wirst du die Logik des fehleranfälligen Service  über die ```@HystrixCommand```-Annotation in ein HystrixCommand kapseln und damit gleich mehrere Stabilitäts-Pattern anwenden. Denke daran geeignete Logging-Ausgaben zu implementieren.
+### Kapselung mittels Circuit Breaker
+In diesem Abschnitt wirst du den fehleranfällige ProductService mit dem Circuit-Breaker-Pattern stabilisieren.
+Denke daran geeignete Logging-Ausgaben festzulegen.
+Füge, falls noch nicht geschehen, die Resilience4j-Abhängigkeiten für `CircuitBreaker` und `TimeLimiter` der `build.gradle` von `fortune-cookie-product-service` hinzu.
 
-**Siehe dazu:** https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-javanica
-
-1. Erweitere die Klasse ```ProductServiceApplication``` um die Annotation ```@EnableHystrix``` (sofern noch nicht geschehen).
-
-*Hystrix sucht in allen @Component und @Service annotierten Klassen nach @HystrixCommand annotierten Methoden.*
-
-Die folgenden Bibliotheken müssen in ```build.gradle``` als Abhängigkeit (dependencies) hinzugefügt werden:
-```
-    compile "com.netflix.hystrix:hystrix-core:1.5.18"
-    compile "com.netflix.hystrix:hystrix-javanica:1.5.18"
-    compile "org.springframework.cloud:spring-cloud-starter-hystrix:1.3.0.RELEASE"
-```
-
-2. Kapsel die Logik der Methode ```getCookies()``` aus der Klasse ```FortuneCookieService``` in einem HystrixCommand. Nutze dabei die ```@HystrixCommand```-Annotation aus der ```hystrix-javanica```-Bibliothek. 
-
-3. Definiert über die Annotation die Fallback-Methode und den GroupKey.
-
-4. Implementiere nun das Fail-Fast Pattern mit Hilfe der ```getCookiesFallback```-Methode. Was wäre ein sinnvoller Fallback-Rückgabewert?
-
+Jetzt kapsel die Logik der Methode `getCookies()` aus der Klasse `FortuneCookieService` mit einem `CircuitBreaker` und einem `TimeLimiter`. Circuit Breaker können auf folgende Weise erstellt werden:
 ```java
-    public ArrayList<FortuneCookieResource> getCookiesFallback() {
+CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
+        .failureRateThreshold(50)                        // %-Rate der fehlschlagenden Versuche, ab der der CircuitBreaker in den OPEN-Zustand wechselt
+        .ringBufferSizeInClosedState(10)                 // Wieviele Versuche bei der Berechnung der Rate im CLOSED-Zustand in Betracht gezogen werden
+        .ringBufferSizeInHalfOpenState(10)               // Wie oben, nur für den HALF-OPEN-Zustand
+        .waitDurationInOpenState(Duration.ofSeconds(20)) // Wie lange im OPEN-Zustand verharrt wird bevor in den HALF-OPEN-Zustand gewechselt wird
+        .enableAutomaticTransitionFromOpenToHalfOpen()
+        .build();
+CircuitBreaker customCircuitBreaker = CircuitBreaker.of("MyCircuitBreaker", circuitBreakerConfig);
+Callable circuitBreakerCallable = CircuitBreaker.decorateCallable(circuitBreaker, myCallable);
 ```
-
-5. Konfiguriere noch ein passendes Timeout mit der Definition von ```execution.isolation.thread.timeoutInMilliseconds``` innerhalb der Konfigurationsdatei der Anwendung (https://github.com/Netflix/Hystrix/wiki/Configuration)
-
-```
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 4500
-```
-
-6. Rufe jetzt das erstellte HystrixCommand im Controller synchron auf.
+Versuche, die folgenden Fragen zu beantworten: Wo muss der Curcuit Breaker instantiiert werden? Wie werden der Time Limiter und der Curcuit Breaker miteinander verbunden? Wie lange sollte der Circuit Breaker im OPEN-Zustand verweilen?
 
 ## Stabilisierung des fortune-cookie-fulfillment-service
-Stabilisiere nun den ```fortune-cookie-fulfillment-service``` mit der ```@HystrixCommand```-Annotation. Die Stabilisierung kann analog zu der Stabilisierung des ```fortune-cookie-product-service``` durchgeführt werden.
+Stabilisiere nun den `fortune-cookie-fulfillment-service`. Die Stabilisierung kann analog zu der Stabilisierung des `fortune-cookie-product-service` durchgeführt werden.
 
-Zu stabilisieren ist dabei die ```sendMail```-Methode der Service-Klasse FulfillmentServiceService. Sie erzeugt ein MailResource objekt und versucht dann den Versand über den ```fortune-cookie-mailing-service``. 
+Zu stabilisieren ist dabei die `sendMail`-Methode der Service-Klasse FulfillmentServiceService. Sie erzeugt ein MailResource objekt und versucht dann den Versand über den `fortune-cookie-mailing-service`. 
 
 ## Test
 Führe nun die Lastest aus und diskutiert wie sich das Verhalten der Anwendung geändert hat.
-
-__Frage:__ Wir hat sich die Fehlerrate (rat) zum initialen Lasttest verändert?
